@@ -13,6 +13,7 @@ editor: visual
 library(tidyverse)
 library(ggplot2)
 library(lme4)
+library(ggplot2)
 ```
 
 ## 2.1
@@ -160,3 +161,49 @@ anova(model)
 -   **However, the influence of rhyme type does not interact with inner speech level, meaning that people with high or low inner speech are affected similarly by the type of rhyme.**
 
 **This suggests that while inner speech might play a small role in processing speed, the type of rhyme is a more consistent and significant factor in determining how quickly people make rhyming judgments.**
+
+## 3.1
+
+**The Beta distribution takes two parameters: α (alpha) and β (beta)**
+
+**To use the Beta distribution, the dependent variable (student marks) must be re-scaled to the interval \[0,1\]**
+
+**This approach improves the model by better reflecting the bounded nature of the data, as marks cannot exceed 100% or go below 0%**
+
+## 3.2
+
+**Creates a sequence of values between 0 and 1 (representing scaled marks)**
+
+```{r}
+x <- seq(0, 1, length.out = 1000)
+```
+
+**Defines parameters for the Beta distribution** **I have chosen alpha = 7 and beta = 5, which gives a distribution centered roughly around 0.6 (60%), which looks correct**
+
+```{r}
+alpha <- 7
+beta <- 5
+```
+
+**Calculates the density of the Beta distribution for the sequence of values**
+
+```{r}
+y <- dbeta(x, alpha, beta)
+```
+
+**Creates a data frame for plotting**
+
+```{r}
+beta_data <- data.frame(x = x, y = y)
+```
+
+**Plots the Beta distribution**
+
+```{r}
+ggplot(beta_data, aes(x = x, y = y)) +
+  geom_line(color = "blue", linewidth = 1) +
+  labs(title = "Beta Distribution (α = 7, β = 5)",
+       x = "Scaled Marks (0 to 1)",
+       y = "Density") +
+  theme_minimal()
+```
