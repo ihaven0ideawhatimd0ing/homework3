@@ -207,3 +207,94 @@ ggplot(beta_data, aes(x = x, y = y)) +
        y = "Density") +
   theme_minimal()
 ```
+
+## 3
+
+### **Informative priors**
+
+**Define a sequence of values for the Beta distribution**
+
+```{r}
+x <- seq(0, 1, length.out = 1000)
+```
+
+**Parameters for the Beta distribution (α = 7, β = 5). These values reflect the belief that marks in PS947 are clustered around 60%, with moderate variability.**
+
+```{r}
+alpha_info <- 7 
+beta_info <- 5
+```
+
+**Calculates the density of the Beta distribution**
+
+```{r}
+beta_density_info <- dbeta(x, alpha_info, beta_info)
+```
+
+**Creates a data frame for plotting**
+
+```{r}
+beta_info_data <- data.frame(x = x, density = beta_density_info, type = "Informative")
+```
+
+**Plots the Beta distribution**
+
+```{r}
+ggplot(beta_info_data, aes(x = x, y = density)) + 
+  geom_line(color = "blue", linewidth = 1) + 
+  labs(title = "Informative Priors (α = 7, β = 5)", 
+       x = "Scaled Scores (0 to 1)", 
+       y = "Density") + 
+  theme_minimal()
+```
+
+### **Weakly informative priors**
+
+**Set seed for reproducibility**
+
+```{r}
+set.seed(123)
+```
+
+**Number of samples**
+
+```{r}
+n_samples <- 1000
+```
+
+**Samples from weakly-informative Gamma priors for α and β** **Gamma(shape = 2, rate = 1) for both α and β create a broad prior that allows a wide range of values for α and β.** **The mean of the Gamma distribution is 2, while the variance is also 2**
+
+```{r}
+alpha_weak <- rgamma(n_samples, shape = 2, rate = 1)
+beta_weak <- rgamma(n_samples, shape = 2, rate = 1)
+```
+
+**Generates samples from the Beta distribution using the sampled α and β**
+
+```{r}
+score_samples_weak <- sapply(1:n_samples, function(i) {
+  rbeta(1000, alpha_weak[i], beta_weak[i])
+})
+```
+
+**Reshapes the samples into a data frame**
+
+```{r}
+score_samples_weak_df <- data.frame(
+  value = as.vector(score_samples_weak),
+  type = "Weakly-Informative"
+)
+```
+
+**Plots the distribution of scores**
+
+```{r}
+ggplot(score_samples_weak_df, aes(x = value)) +
+  geom_density(fill = "red", alpha = 0.5) +
+  labs(title = "Weakly-Informative Priors (Gamma(2, 1))",
+       x = "Scaled Scores (0 to 1)",
+       y = "Density") +
+  theme_minimal()
+```
+
+*url for repository: https://github.com/ihaven0ideawhatimd0ing/homework3*
