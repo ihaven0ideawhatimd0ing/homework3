@@ -120,17 +120,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: Matrix
+
+Attaching package: 'Matrix'
+
+The following objects are masked from 'package:tidyr':
+
+    expand, pack, unpack</code></pre>
+</div>
 </div>
 <section id="section" class="level2">
 <h2 class="anchored" data-anchor-id="section">2.1</h2>
 <p><strong>Reads the dataset</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rhyming_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"C:/Users/smigi/Desktop/PS947/rhyming.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>rhyming_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"C:/Users/smigi/Desktop/PS947/rhyming.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Displays the first few rows of the dataset to check its structure</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rhyming_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rhyming_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  image_2 image_1     rt correct  type VerbalScored high_low_verbal worker_id
 1     bag    flag 1335.8       1 ortho     2.250000      low_verbal  05Wo9IGy
@@ -152,27 +162,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Underscore was used to separate the two names for clarity</strong></p>
 <p><strong><code>remove = TRUE</code> removes the original ‘image_1’ and ‘image_2’ columns after merging</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rhyming_data <span class="ot">&lt;-</span> rhyming_data <span class="sc">%&gt;%</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="at">col =</span> <span class="st">"stimulus"</span>, image_1, image_2, <span class="at">sep =</span> <span class="st">"_"</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>rhyming_data <span class="ot">&lt;-</span> rhyming_data <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="at">col =</span> <span class="st">"stimulus"</span>, image_1, image_2, <span class="at">sep =</span> <span class="st">"_"</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Converts ‘type’ to a factor variable to make modeling and plotting easier later</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>rhyming_data<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rhyming_data<span class="sc">$</span>type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rhyming_data<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rhyming_data<span class="sc">$</span>type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Converts ‘high_low_verbal’ to a factor as well, as it is categorical data</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rhyming_data<span class="sc">$</span>high_low_verbal <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rhyming_data<span class="sc">$</span>high_low_verbal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>rhyming_data<span class="sc">$</span>high_low_verbal <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(rhyming_data<span class="sc">$</span>high_low_verbal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Checks for missing values</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(rhyming_data)) <span class="co"># Returns total count of missing values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(rhyming_data)) <span class="co"># Returns total count of missing values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
 </div>
 <p><strong>Displays structure of the dataset to check changes</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rhyming_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rhyming_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   4861 obs. of  8 variables:
  $ stimulus       : chr  "flag_bag" "flag_bag" "flag_bag" "flag_bag" ...
@@ -196,18 +206,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong><code>fill = high_low_verbal</code> maps the inner voice level (high or low) to the fill colour of the boxes.</strong></p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(rhyming_data, <span class="fu">aes</span>(<span class="at">x =</span> type, <span class="at">y =</span> rt, <span class="at">fill =</span> high_low_verbal)) <span class="sc">+</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="co"># Creates boxplots for each combination of `type` and `high_low_verbal`</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"high_verbal"</span> <span class="ot">=</span> <span class="st">"skyblue"</span>, <span class="st">"low_verbal"</span> <span class="ot">=</span> <span class="st">"salmon"</span>)) <span class="sc">+</span> <span class="co"># Fills boxplot with custom colors</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Effect of Stimulus Type and Inner Voice Level on Reaction Times"</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Stimulus Type"</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Reaction Time (ms)"</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Inner Voice Level"</span>) <span class="sc">+</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="co"># Applies a minimal theme to the plot for a clean look</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(rhyming_data, <span class="fu">aes</span>(<span class="at">x =</span> type, <span class="at">y =</span> rt, <span class="at">fill =</span> high_low_verbal)) <span class="sc">+</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="co"># Creates boxplots for each combination of `type` and `high_low_verbal`</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"high_verbal"</span> <span class="ot">=</span> <span class="st">"skyblue"</span>, <span class="st">"low_verbal"</span> <span class="ot">=</span> <span class="st">"salmon"</span>)) <span class="sc">+</span> <span class="co"># Fills boxplot with custom colors</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Effect of Stimulus Type and Inner Voice Level on Reaction Times"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Stimulus Type"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Reaction Time (ms)"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Inner Voice Level"</span>) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="co"># Applies a minimal theme to the plot for a clean look</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Displays the plot</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -216,13 +226,121 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><strong>Saves the plot to a file with high resolution</strong></p>
+</section>
+<section id="section-2" class="level2">
+<h2 class="anchored" data-anchor-id="section-2">2.3</h2>
+<p><strong>An appropriate model structure for this analysis would be a <em>linear mixed effects model</em> (LMM)</strong></p>
+<p><strong>This is because LMM can account for fixed effects (type, high_low_verbal) and random effects (variability between participants)</strong></p>
+<p><strong>LMM are good for continuous outcome variables, such as reaction time</strong></p>
+<p><strong>The model structure will include:</strong></p>
+<p><strong>Fixed Effects:</strong></p>
+<ul>
+<li><p><strong>type: to test the effect of stimulus type on reaction times</strong></p></li>
+<li><p><strong>high_low_verbal: to test the effect of inner voice level on reaction times</strong></p></li>
+<li><p><strong>Interaction between type and high_low_verbal: to test whether the effect of stimulus type depends on inner voice level</strong></p></li>
+</ul>
+<p><strong>Random Effects:</strong></p>
+<ul>
+<li><strong>Random intercept for worker_id: to account for individual differences in baseline reaction times</strong></li>
+</ul>
+<p><strong>Fits the linear mixed-effects model</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"reaction_time_plot.png"</span>, <span class="at">plot =</span> plot, <span class="at">dpi =</span> <span class="dv">300</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Saving 7 x 5 in image</code></pre>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(rt <span class="sc">~</span> type <span class="sc">*</span> high_low_verbal <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> worker_id), <span class="at">data =</span> rhyming_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Displays the model summary</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: rt ~ type * high_low_verbal + (1 | worker_id)
+   Data: rhyming_data
+
+REML criterion at convergence: 77153.2
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.4962 -0.6590 -0.2306  0.4046  4.9186 
+
+Random effects:
+ Groups    Name        Variance Std.Dev.
+ worker_id (Intercept)  87738   296.2   
+ Residual              442321   665.1   
+Number of obs: 4861, groups:  worker_id, 93
+
+Fixed effects:
+                                    Estimate Std. Error t value
+(Intercept)                          1855.93      48.40  38.342
+typeNR                                 75.59      31.69   2.385
+typeortho                            -136.05      33.30  -4.085
+high_low_verballow_verbal             122.84      68.87   1.784
+typeNR:high_low_verballow_verbal      -23.35      45.17  -0.517
+typeortho:high_low_verballow_verbal    19.55      47.42   0.412
+
+Correlation of Fixed Effects:
+            (Intr) typeNR typrth hgh___ tNR:__
+typeNR      -0.310                            
+typeortho   -0.295  0.451                     
+hgh_lw_vrb_ -0.703  0.218  0.208              
+typNR:hg___  0.218 -0.702 -0.317 -0.311       
+typrth:h___  0.207 -0.317 -0.702 -0.297  0.452</code></pre>
 </div>
 </div>
+<p><strong>Extracts and interprets the fixed effects</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                        (Intercept)                              typeNR 
+                         1855.92851                            75.58663 
+                          typeortho           high_low_verballow_verbal 
+                         -136.05063                           122.84445 
+   typeNR:high_low_verballow_verbal typeortho:high_low_verballow_verbal 
+                          -23.34811                            19.54611 </code></pre>
+</div>
+</div>
+<p><strong>Checks the significance of the fixed effects</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+                     npar   Sum Sq  Mean Sq F value
+type                    2 27868582 13934291 31.5027
+high_low_verbal         1  1551284  1551284  3.5071
+type:high_low_verbal    2   350022   175011  0.3957</code></pre>
+</div>
+</div>
+<section id="summary-of-findings" class="level3">
+<h3 class="anchored" data-anchor-id="summary-of-findings"><strong>Summary of Findings</strong></h3>
+<ol type="1">
+<li><strong>Effect of Inner Speech Level</strong>:
+<ul>
+<li><strong>Participants with a low inner speech level (<code>high_low_verballow_verbal</code>) had reaction times that were 122.84 ms slower on average (SE = 68.87, t = 1.784) compared to those with a high inner speech level. This effect is marginally significant (F = 3.5071, p = 0.06), suggesting that inner speech level may have a small influence on reaction times.</strong></li>
+</ul></li>
+<li><strong>Effect of Rhyme Type</strong>:
+<ul>
+<li><strong>Orthographic rhymes (<code>typeortho</code>) led to 136.05 ms faster reaction times on average (SE = 33.30, t = -4.085) compared to non-orthographic rhymes.</strong></li>
+<li><strong>Non-rhyming pairs (<code>typeNR</code>) resulted in 75.59 ms slower reaction times (SE = 31.69, t = 2.385) compared to non-orthographic rhymes.</strong></li>
+<li><strong>The overall effect of rhyme type is highly significant (F = 31.5027, p &lt; 0.001), indicating that the type of rhyme strongly influences reaction times.</strong></li>
+</ul></li>
+<li><strong>Interaction Between Inner Speech and Rhyme Type</strong>:
+<ul>
+<li><strong>The interaction terms (<code>typeNR:high_low_verballow_verbal</code> and <code>typeortho:high_low_verballow_verbal</code>) were not statistically significant (t = -0.517 and t = 0.412, respectively).</strong></li>
+<li><strong>The ANOVA results confirm that the interaction is not significant (F = 0.3957, p &gt; 0.05), meaning the effect of rhyme type on reaction times does not depend on inner speech level.</strong></li>
+</ul></li>
+</ol>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion"><strong>Conclusion</strong>:</h3>
+<ul>
+<li><strong>Your level of inner speech may slightly affect how quickly you judge whether words rhyme, with lower inner speech levels potentially slowing you down by 122.84 ms on average (though this effect is only marginally significant).</strong></li>
+<li><strong>The type of rhyme strongly influences reaction times:</strong>
+<ul>
+<li><strong>Orthographic rhymes speed up judgments by 136.05 ms on average.</strong></li>
+<li><strong>Non-rhyming pairs slow down judgments by 75.59 ms on average.</strong></li>
+</ul></li>
+<li><strong>However, the influence of rhyme type does not interact with inner speech level, meaning that people with high or low inner speech are affected similarly by the type of rhyme.</strong></li>
+</ul>
+<p><strong>This suggests that while inner speech might play a small role in processing speed, the type of rhyme is a more consistent and significant factor in determining how quickly people make rhyming judgments.</strong></p>
+</section>
 </section>
 </section>
 

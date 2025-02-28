@@ -12,6 +12,7 @@ editor: visual
 ```{r}
 library(tidyverse)
 library(ggplot2)
+library(lme4)
 ```
 
 ## 2.1
@@ -92,8 +93,70 @@ plot <- ggplot(rhyming_data, aes(x = type, y = rt, fill = high_low_verbal)) +
 print(plot)
 ```
 
-**Saves the plot to a file with high resolution**
+## 2.3
+
+**An appropriate model structure for this analysis would be a *linear mixed effects model* (LMM)**
+
+**This is because LMM can account for fixed effects (type, high_low_verbal) and random effects (variability between participants)**
+
+**LMM are good for continuous outcome variables, such as reaction time**
+
+**The model structure will include:**
+
+**Fixed Effects:**
+
+-   **type: to test the effect of stimulus type on reaction times**
+
+-   **high_low_verbal: to test the effect of inner voice level on reaction times**
+
+-   **Interaction between type and high_low_verbal: to test whether the effect of stimulus type depends on inner voice level**
+
+**Random Effects:**
+
+-   **Random intercept for worker_id: to account for individual differences in baseline reaction times**
+
+**Fits the linear mixed-effects model**
 
 ```{r}
-ggsave("reaction_time_plot.png", plot = plot, dpi = 300)
+model <- lmer(rt ~ type * high_low_verbal + (1 | worker_id), data = rhyming_data)
 ```
+
+**Displays the model summary**
+
+```{r}
+summary(model)
+```
+
+**Extracts and interprets the fixed effects**
+
+```{r}
+fixef(model)
+```
+
+**Checks the significance of the fixed effects**
+
+```{r}
+anova(model)
+```
+
+### **Summary of Findings**
+
+1.  **Effect of Inner Speech Level**:
+    -   **Participants with a low inner speech level (`high_low_verballow_verbal`) had reaction times that were 122.84 ms slower on average (SE = 68.87, t = 1.784) compared to those with a high inner speech level. This effect is marginally significant (F = 3.5071, p = 0.06), suggesting that inner speech level may have a small influence on reaction times.**
+2.  **Effect of Rhyme Type**:
+    -   **Orthographic rhymes (`typeortho`) led to 136.05 ms faster reaction times on average (SE = 33.30, t = -4.085) compared to non-orthographic rhymes.**
+    -   **Non-rhyming pairs (`typeNR`) resulted in 75.59 ms slower reaction times (SE = 31.69, t = 2.385) compared to non-orthographic rhymes.**
+    -   **The overall effect of rhyme type is highly significant (F = 31.5027, p \< 0.001), indicating that the type of rhyme strongly influences reaction times.**
+3.  **Interaction Between Inner Speech and Rhyme Type**:
+    -   **The interaction terms (`typeNR:high_low_verballow_verbal` and `typeortho:high_low_verballow_verbal`) were not statistically significant (t = -0.517 and t = 0.412, respectively).**
+    -   **The ANOVA results confirm that the interaction is not significant (F = 0.3957, p \> 0.05), meaning the effect of rhyme type on reaction times does not depend on inner speech level.**
+
+### **Conclusion**:
+
+-   **Your level of inner speech may slightly affect how quickly you judge whether words rhyme, with lower inner speech levels potentially slowing you down by 122.84 ms on average (though this effect is only marginally significant).**
+-   **The type of rhyme strongly influences reaction times:**
+    -   **Orthographic rhymes speed up judgments by 136.05 ms on average.**
+    -   **Non-rhyming pairs slow down judgments by 75.59 ms on average.**
+-   **However, the influence of rhyme type does not interact with inner speech level, meaning that people with high or low inner speech are affected similarly by the type of rhyme.**
+
+**This suggests that while inner speech might play a small role in processing speed, the type of rhyme is a more consistent and significant factor in determining how quickly people make rhyming judgments.**
