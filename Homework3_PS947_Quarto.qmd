@@ -1,27 +1,98 @@
 ---
-title: "Untitled"
+title: "Homework3"
+author: "Robert Smigielski"
 format: html
 editor: visual
 ---
 
-## Quarto
+# Homework 3
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+**Loads libraries**
 
 ```{r}
-1 + 1
+library(tidyverse)
 ```
 
-You can add options to executable code like this
+## 2.1
+
+**Reads the dataset**
 
 ```{r}
-#| echo: false
-2 * 2
+rhyming_data <- read.csv("C:/Users/smigi/Desktop/PS947/rhyming.csv")
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
-#
+**Displays the first few rows of the dataset to check its structure**
+
+```{r}
+head(rhyming_data)
+```
+
+**`unite()` used to merge 'image_1' and 'image_2', into a single 'stimulus' column**
+
+**Underscore was used to separate the two names for clarity**
+
+**`remove = TRUE` removes the original 'image_1' and 'image_2' columns after merging**
+
+```{r}
+rhyming_data <- rhyming_data %>% 
+  unite(col = "stimulus", image_1, image_2, sep = "_", remove = TRUE)
+```
+
+**Converts 'type' to a factor variable to make modeling and plotting easier later**
+
+```{r}
+rhyming_data$type <- as.factor(rhyming_data$type)
+```
+
+**Converts 'high_low_verbal' to a factor as well, as it is categorical data**
+
+```{r}
+rhyming_data$high_low_verbal <- as.factor(rhyming_data$high_low_verbal)
+```
+
+**Checks for missing values**
+
+```{r}
+sum(is.na(rhyming_data)) # Returns total count of missing values
+```
+
+**Displays structure of the dataset to check changes**
+
+```{r}
+str(rhyming_data)
+```
+
+## 2.2
+
+**Plots the data to show how stimulus type and the level of inner voice affect reaction times**
+
+-   **`aes()` defines the aesthetics for the plot:**
+
+-   **`x = type` maps the stimulus type to the x-axis**
+
+-   **`y = rt` maps the reaction time (ms) to the y-axis**
+
+-   **`fill = high_low_verbal` maps the inner voice level (high or low) to the fill colour of the boxes.**
+
+```{r}
+plot <- ggplot(rhyming_data, aes(x = type, y = rt, fill = high_low_verbal)) + 
+  geom_boxplot() + # Creates boxplots for each combination of `type` and `high_low_verbal`
+  scale_fill_manual(values = c("high_verbal" = "skyblue", "low_verbal" = "salmon")) + # Fills boxplot with custom colors
+  labs(title = "Effect of Stimulus Type and Inner Voice Level on Reaction Times",
+       x = "Stimulus Type",
+       y = "Reaction Time (ms)",
+       fill = "Inner Voice Level") +
+  theme_minimal() + # Applies a minimal theme to the plot for a clean look
+```
+
+**Displays the plot**
+
+```{r}
+print(plot)
+```
+
+**Saves the plot to a file with high resolution**
+
+```{r}
+ggsave("reaction_time_plot.png", plot = plot, dpi = 300)
+```
