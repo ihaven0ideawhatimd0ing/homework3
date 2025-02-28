@@ -1,69 +1,27 @@
 ---
-title: "Homework3"
-author: "Robert Smigielski"
+title: "Untitled"
 format: html
 editor: visual
 ---
 
-## Homework 3
+## Quarto
 
-**Loads libraries**
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
 
-```{r}
-library(tidyverse)
-```
+## Running Code
 
-## 2.1
-
-**Reads the dataset**
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
 ```{r}
-rhyming_data <- read.csv("C:/Users/smigi/Desktop/PS947/rhyming.csv")
+1 + 1
 ```
 
-**Displays the first few rows of the dataset to check its structure**
+You can add options to executable code like this
 
 ```{r}
-head(rhyming_data)
+#| echo: false
+2 * 2
 ```
 
-**`unite()` used to merge 'image_1' and 'image_2', into a single 'stimulus' column**
-
-**Underscore was used to separate the two names for clarity**
-
-**`remove = TRUE` removes the original 'image_1' and 'image_2' columns after merging**
-
-```{r}
-rhyming_data <- rhyming_data %>% 
-  unite(col = "stimulus", image_1, image_2, sep = "_", remove = TRUE)
-```
-
-**Converts 'type' to a factor variable to make modeling and plotting easier later**
-
-```{r}
-rhyming_data$type <- as.factor(rhyming_data$type)
-```
-
-**Converts 'high_low_verbal' to a factor as well, as it is categorical data**
-
-```{r}
-rhyming_data$high_low_verbal <- as.factor(rhyming_data$high_low_verbal)
-```
-
-**Checks for missing values for possible data cleaning**
-
-```{r}
-sum(is.na(rhyming_data)) # Returns total count of missing values
-```
-
-**Displays structure of the cleaned dataset to check changes**
-
-```{r}
-str(rhyming_data)
-```
-
-**Saves the cleaned dataset for further analysis**
-
-```{r}
-write.csv(rhyming_data, "tidy_rhyming.csv", row.names = FALSE)
-```
+The `echo: false` option disables the printing of code (only output is displayed).
+#
